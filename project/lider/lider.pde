@@ -1,10 +1,10 @@
 //VScode Ctrl+shift+bで実行
 import processing.serial.*;
 Serial myPort;
-
+/*field size*/
 public static final int fx = 1000;
 public static final int fy = 1000;
-
+/*Grid size*/
 public static final int grid = 125;
 
 int x = 0,y = 0;
