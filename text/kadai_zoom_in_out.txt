@@ -1,0 +1,26 @@
+PImage photo;
+float  scale=1.0;
+int  flag=0;    //0:kakudai  1:shukushou
+
+void setup(){
+  size( 600, 400 );
+  photo = loadImage( "../image/meguro_river.jpg" );  //megro_river
+//  photo = loadImage( "../image/cheer1.jpg" );  //cheer
+  imageMode(CENTER);
+  frameRate(30);
+}
+
+void draw(){
+  fill( 0, 0, 0, 100 );
+  rect( 0, 0, width, height );
+  if(flag==0){
+    scale=scale*1.01;
+    if(scale>5.0)  
+      flag=1;
+   }else{
+     scale=scale*0.98;
+     if(scale<0.2)  flag=0;
+   }  
+    image( photo, width/2, height/2,width*scale,height*scale );    //zentai
+}
+

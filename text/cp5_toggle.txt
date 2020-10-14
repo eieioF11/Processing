@@ -1,0 +1,45 @@
+import controlP5.*;
+
+ControlP5 cp5_T;
+
+boolean toggleSW;
+Toggle tg;
+
+void setup(){
+  size(400, 400);
+  rectMode(CENTER);
+  cp5_T = new ControlP5(this);
+  
+  cp5_T.addToggle("toggleSW")
+     .setLabel("left")
+     .setPosition(100, 100)
+     .setValue(false)
+     .setSize(40, 20);
+  
+  tg = cp5_T.addToggle("right")
+           .setPosition(260, 100)
+           .setValue(false)
+           .setSize(40, 20)
+           .setMode(ControlP5.SWITCH);     
+}
+
+void draw(){
+  background(128);
+  stroke(255);
+  
+  // left box
+  if(toggleSW){
+    fill(255);
+  } else {
+    noFill();
+  }
+  rect(120, 250, 100, 100);
+  
+  // right box
+  if(tg.getBooleanValue()){
+    fill(255);
+  } else {
+    noFill();
+  }
+  rect(280, 250, 100, 100);
+}

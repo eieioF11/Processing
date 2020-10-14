@@ -1,0 +1,70 @@
+import controlP5.*;
+import java.util.*;
+
+ControlP5 cp5_L;
+ScrollableList SLL;
+DropdownList SDL;
+
+List Items1 = Arrays.asList("COM 1", "COM 2", "COM 3");
+List Items2 = Arrays.asList("CH 1", "CH 2", "CH 3");
+
+int[] num1 = {0,0,0};
+int[] num2 = {0,0,0};
+
+void setup(){
+  size(300,300);
+  noStroke();
+  PFont font = createFont("arial",15);  
+  
+  cp5_L = new ControlP5(this);
+  SLL = cp5_L.addScrollableList("ScrollList")
+             .setPosition(30,20)
+             .addItems(Items1);
+             
+  SDL = cp5_L.addDropdownList("DropList")
+             .setPosition(170,20)
+             .addItems(Items2);
+
+}
+
+void draw(){
+  background(110); //Color
+  for(int i=0; i<Items1.size();i++){
+    for(int j=0; j<Items2.size(); j++) {
+      stroke(0, 0, 255);
+      line(150, 160+25*i,150+75*num1[i]*num2[j],(160+25*i)+(25*(j-i))*num1[i]*num2[j]);
+      noStroke();
+    }
+    fill(255);
+    rect(30, 150+25*i, 120*num1[i], 25*num1[i]);
+    fill(255, 255, 0);
+    ellipse(225, 160+25*i, 40*num2[i], 40*num2[i]);
+
+  }
+  
+  fill(110);
+  textSize(15);
+  text("COM1 Connect", 35, 167);
+  text("COM2 Connect", 35, 192);
+  text("COM3 Connect", 35, 217);
+  textSize(10);
+  text("CH 1", 212, 165);
+  text("CH 2", 212, 190);
+  text("CH 3", 212, 215);
+}
+
+void ScrollList(int n1) {
+  switch (n1) {
+    case 0: num1[0]=1; num1[1]=0; num1[2]=0; break;
+    case 1: num1[0]=0; num1[1]=1; num1[2]=0; break;
+    case 2: num1[0]=0; num1[1]=0; num1[2]=1; break;
+  }
+}
+
+void DropList(int n2) {
+  switch (n2) {
+    case 0: num2[0]=1; num2[1]=0; num2[2]=0; break;
+    case 1: num2[0]=0; num2[1]=1; num2[2]=0; break;
+    case 2: num2[0]=0; num2[1]=0; num2[2]=1; break;
+  }
+}

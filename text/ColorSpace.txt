@@ -1,0 +1,38 @@
+void setup(){
+  size( 700,300 );
+  colorMode(HSB, 100);
+  textSize(16);
+  text("ColorMode(HSB)",0,16);
+  for(int k=0;k<6;k++){
+    int  offsetX = k*120;
+    int  offsetY = 20;
+    for (int i = 0; i < 100; i++) {
+      for (int j = 0; j < 100; j++) {
+        stroke(i, j, 100-k*20);
+        point(offsetX+i, offsetY+j);
+      }
+    }
+  }
+  for(int k=0;k<6;k++){
+    String s= "Br="+String.valueOf(int(100-k*20));
+    text(s,30+k*120,120+16);
+  }text("ColorMode(RGB)",0,140+16);
+  colorMode(RGB, 100);
+  for(int k=0;k<6;k++){
+    int  offsetX = k*120;
+    int  offsetY = 140+20;
+   for (int i = 0; i < 100; i++) {
+      for (int j = 0; j < 100; j++) {
+        stroke(i, j, k*20);
+        point(offsetX+i, offsetY+j);
+      }
+    }
+  }
+  for(int k=0;k<6;k++){
+    String s= "Bl="+String.valueOf(int(k*20));
+    text(s,30+k*120,260+16);
+  }
+}
+void draw(){
+}
+

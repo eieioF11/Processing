@@ -1,0 +1,22 @@
+import controlP5.*;
+ControlP5 cp5; 
+Textfield Txt; 
+
+void setup(){
+ size(300,300);
+   
+ cp5 = new ControlP5(this);
+   
+ Txt = cp5.addTextfield("inputText") 
+               .setPosition(30,30) 
+               .setSize(200,40);   
+}
+
+void draw(){
+  fill(110);
+  rect(0,0,width,height);
+  
+  fill(255);
+  textSize(25);
+  text(Txt.getText(), 30, 200);
+} 
