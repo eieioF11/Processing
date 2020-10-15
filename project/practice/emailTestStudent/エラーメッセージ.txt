@@ -1,0 +1,21 @@
+send mail
+authenticating. .
+
+以下は赤字のエラーメッセージ 
+javax.mail.MessagingException: Could not connect to SMTP host: 192.168.11.4, port: 25;
+  nested exception is:
+	java.net.ConnectException: Connection timed out: connect
+	at com.sun.mail.smtp.SMTPTransport.openServer(SMTPTransport.java:1227)
+	at com.sun.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:322)
+	at javax.mail.Service.connect(Service.java:258)
+	at javax.mail.Service.connect(Service.java:137)
+	at javax.mail.Service.connect(Service.java:86)
+	at javax.mail.Transport.send0(Transport.java:150)
+	at javax.mail.Transport.send(Transport.java:80)
+	at emailTestStudent.sendMail(emailTestStudent.java:166)
+	at emailTestStudent.draw(emailTestStudent.java:77)
+	at processing.core.PApplet.handleDraw(PApplet.java:2386)
+	at processing.core.PGraphicsJava2D.requestDraw(PGraphicsJava2D.java:240)
+	at processing.core.PApplet.run(PApplet.java:2256)
+	at java.lang.Thread.run(Unknown Source)
+

@@ -1,0 +1,26 @@
+PImage img;
+int  inc=0,dec=255,flag=0;
+void setup(){
+  size( 600, 400 );
+  img = loadImage( "../../image/cheer1.jpg" ); 
+  imageMode(CENTER);
+}
+
+void draw(){
+  image(img, width/2, height/2,width,height );  
+  if(flag==0){     // fade-in
+    fill(0,0,0,dec);
+    rect(0,0,width,height);
+    dec--;
+    if(dec==0){
+      flag=1;
+      delay(2000);
+    }
+  }else{          //fade-out    
+    fill(0,0,0,inc);
+    rect(0,0,width,height);
+    inc++;
+    delay(10);
+  }
+}
+
