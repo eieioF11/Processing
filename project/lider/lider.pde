@@ -56,31 +56,55 @@ void save(int x_,int y_)
 
 float[][] AveX = new float[8][8];
 float[][] AveY = new float[8][8];
+float[][] Cov  = new float[8][8];
+void Covariance(int gx,int gy,int G)
+{
+	AveX[gx][gy] = 0;
+	AveY[gx][gy] = 0;
+	Cov[gx][gy]  = 0;
+	for(int i=gx*G;i<(gx+1)*G;i++)
+	{
+		for(int j=gy*G;j<(gy+1)*G;j++)
+		{
+			if(fielddata[i][j]!=0)
+			{
+				AveX[gx][gy]+=i-gx*G;
+				AveY[gx][gy]+=j-gy*G;
+			}
+		}
+	}
+	AveX[gx][gy]/=G*G;
+	AveY[gx][gy]/=G*G;
+	for(int i=gx*G;i<(gx+1)*G;i++)
+	{
+		for(int j=gy*G;j<(gy+1)*G;j++)
+		{
+			if(fielddata[i][j]!=0)
+			{
+				float Xk=i-gx*G;
+				float Yk=j-gy*G;
+				Cov[gx][gy]+=(Xk-AveX[gx][gy])*(Yk-AveY[gx][gy]);
+			}
+		}
+	}
+	Cov[gx][gy]/=G*G-1;
+}
+
 void NDT()
 {
 	textSize(10);
+	String data;
 	for(int x=0;x<8;x++)
 	{
 		for(int y=0;y<8;y++)
 		{
-			AveX[x][y]=0;
-			AveY[x][y]=0;
-			for(int i=x*grid;i<(x+1)*grid;i++)
-			{
-				if(fielddata[i][y*grid]!=0)
-					AveX[x][y]+=i-x*grid;
-			}
-			AveX[x][y]/=grid;
-			String data="x:"+nf(x)+"/"+nf(AveX[x][y],2,3);
+			Covariance(x,y,grid);
+			data="AveX:"+nf(x)+"/"+nf(AveX[x][y],2,3);
 			text(data,x*grid,y*grid+10);
-			for(int i=y*grid;i<(y+1)*grid;i++)
-			{
-				if(fielddata[x*grid][i]!=0)
-					AveY[x][y]+=i-y*grid;
-			}
-			AveY[x][y]/=grid;
-			data="y:"+nf(y)+"/"+nf(AveY[x][y],2,3);
+			data="AveY:"+nf(y)+"/"+nf(AveY[x][y],2,3);
 			text(data,x*grid,y*grid+20);
+			data="Cov :"+nf(Cov[x][y],2,3);
+			text(data,x*grid,y*grid+30);
 		}
 	}
 }
