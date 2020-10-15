@@ -73,8 +73,8 @@ void Covariance(int gx,int gy,int G)
 			}
 		}
 	}
-	AveX[gx][gy]/=G*G;
-	AveY[gx][gy]/=G*G;
+	AveX[gx][gy]/=(G-1)*(G-1);
+	AveY[gx][gy]/=(G-1)*(G-1);
 	for(int i=gx*G;i<(gx+1)*G;i++)
 	{
 		for(int j=gy*G;j<(gy+1)*G;j++)
