@@ -39,7 +39,7 @@ void setup()
 	//myPort = new Serial (this, Serial.list ()[1],115200);
 	field();
 	//myPort = new Serial(this, "COM8", 115200);//home COM4 note COM15
-	//myPort = new Serial(this, "COM6", 115200);//home COM4 note COM15
+	myPort = new Serial(this, "COM6", 115200);//home COM4 note COM15
 }
 
 byte[][] fielddata = new byte[fx + 1][fy + 1];
