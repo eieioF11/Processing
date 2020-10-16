@@ -7,9 +7,6 @@ public static final int fy = 1000;
 /*Grid size*/
 public static final int grid = 125;
 
-int x = 0,y = 0;
-int dis = 0,angle;
-//float angle=0;
 
 void field()
 {
@@ -43,22 +40,94 @@ void setup()
 }
 
 byte[][] fielddata = new byte[fx + 1][fy + 1];
-void save(int x_,int y_)
+byte[][] fielddata_ = new byte[fx + 1][fy + 1];
+void CopyArray_float(float array1[][],float array2[][],int x,int y)
 {
+	for(int i=0;i<x;i++)
+	{
+		for(int j=0;j<y;j++)
+		{
+			array1[i][j]=array2[i][j];
+		}
+	}
+}
+void CopyArray_byte(byte array1[][],byte array2[][],int x,int y)
+{
+	for(int i=0;i<x;i++)
+	{
+		for(int j=0;j<y;j++)
+		{
+			array1[i][j]=array2[i][j];
+		}
+	}
+}
+void clean(byte field[][])
+{
+	for (int i = 0;i < fx;i++)
+	{
+		for (int j = 0;j < fy;j++)
+		{
+			field[i][j] = 0;
+		}
+	}
+}
+boolean rflag=false;
+void save(int x_,int y_,boolean start)
+{
+	if(start)
+	{
+		if(!rflag)
+		{
+			CopyArray_byte(fielddata_,fielddata,fx+1,fy+1);
+			CopyArray_float(preCov,Cov,8,8);
+			clean(fielddata);
+			rflag=true;
+		}
+	}
+	else
+		rflag=false;
 	int indexX = x_ + (int)(fx / 2);
 	int indexY = y_ + (int)(fy / 2);
 	if (indexX > fx)indexX = fx;
 	if (indexY > fy)indexY = fy;
 	if (indexX < 0)indexX = 0;
 	if (indexY < 0)indexY = 0;
-	fielddata[indexX][indexY] +=1;
+	fielddata[indexX][indexY] = 1;
+}
+void print()
+{
+	strokeWeight(3);
+	for (int i = 0;i < fx;i++)
+	{
+		for (int j = 0;j < fy;j++)
+		{
+			if (fielddata[i][j]!= 0)
+			{
+				stroke(255,0,0);
+				point(i,j);
+			}
+			if (fielddata_[i][j]!= 0)
+			{
+				stroke(0,255,0);
+				point(i,j);
+			}
+		}
+	}
+}
+void gaze()
+{
+	strokeWeight(1);
+	stroke(0,50,100);
+	int sx = (int)(cos(radians((float)angle)) * 1000);
+	int sy = (int)(sin(radians((float)angle)) * 1000) *- 1;
+	line((int)(fx / 2),(int)(fy / 2),sx + (int)(fx / 2),sy + (int)(fy / 2));
 }
 
 // １グリッドごとの共分散計算
 float[][] AveX = new float[8][8];
 float[][] AveY = new float[8][8];
 float[][] Cov  = new float[8][8];
-void Covariance(int gx,int gy,int G)
+void Covariance(byte field[][],int gx,int gy,int G)
 {
 	int N=0;
 	AveX[gx][gy] = 0;
@@ -69,7 +138,7 @@ void Covariance(int gx,int gy,int G)
 	{
 		for(int j=gy*G;j<(gy+1)*G;j++)
 		{
-			if(fielddata[i][j]!=0)
+			if(field[i][j]!=0)
 			{
 				AveX[gx][gy]+=i-gx*G;
 				AveY[gx][gy]+=j-gy*G;
@@ -77,25 +146,30 @@ void Covariance(int gx,int gy,int G)
 			}
 		}
 	}
-	AveX[gx][gy]/=N;
-	AveY[gx][gy]/=N;
-	/*共分散計算*/
-	for(int i=gx*G;i<(gx+1)*G;i++)
+	if(N!=0)
 	{
-		for(int j=gy*G;j<(gy+1)*G;j++)
+		AveX[gx][gy]/=N;
+		AveY[gx][gy]/=N;
+		/*共分散計算*/
+		for(int i=gx*G;i<(gx+1)*G;i++)
 		{
-			if(fielddata[i][j]!=0)
+			for(int j=gy*G;j<(gy+1)*G;j++)
 			{
-				float Xk=i-gx*G;
-				float Yk=j-gy*G;
-				Cov[gx][gy]+=(Xk-AveX[gx][gy])*(Yk-AveY[gx][gy]);
+				if(fielddata[i][j]!=0)
+				{
+					float Xk=i-gx*G;
+					float Yk=j-gy*G;
+					Cov[gx][gy]+=(Xk-AveX[gx][gy])*(Yk-AveY[gx][gy]);
+				}
 			}
 		}
+		Cov[gx][gy]/=N-1;
 	}
-	Cov[gx][gy]/=N-1;
 }
 //NDT Slam
-void NDT()
+
+float[][] preCov  = new float[8][8];
+void NDT(byte nowfield[][],byte prefield[][],boolean start)
 {
 	textSize(10);
 	String data;
@@ -103,7 +177,7 @@ void NDT()
 	{
 		for(int y=0;y<8;y++)
 		{
-			Covariance(x,y,grid);
+			Covariance(nowfield,x,y,grid);
 			data="AveX:"+nf(x)+"/"+nf(AveX[x][y],2,3);
 			text(data,x*grid,y*grid+10);
 			data="AveY:"+nf(y)+"/"+nf(AveY[x][y],2,3);
@@ -114,59 +188,21 @@ void NDT()
 	}
 }
 
-int r = 100;
-int g = 50;
-int b = 255;
-void print()
-{
-	strokeWeight(3);
-	for (int i = 0;i < fx;i++)
-	{
-		for (int j = 0;j < fy;j++)
-		{
-			if (fielddata[i][j]!= 0)
-			{
-				r = 100 + fielddata[i][j] * fielddata[i][j];
-				b = 255 - fielddata[i][j] * fielddata[i][j];
-				if (b < 0)b = 0;
-				if (r > 255)r = 255;
-				stroke(r,g,b);
-				point(i,j);
-			}
-		}
-	}
-}
-void clean()
-{
-	for (int i = 0;i < fx;i++)
-	{
-		for (int j = 0;j < fy;j++)
-		{
-			fielddata[i][j] = 0;
-		}
-	}
-}
-
-void gaze()
-{
-	strokeWeight(1);
-	stroke(0,50,100);
-	int sx = (int)(cos(radians((float)angle)) * 1000);
-	int sy = (int)(sin(radians((float)angle)) * 1000) *- 1;
-	line((int)(fx / 2),(int)(fy / 2),sx + (int)(fx / 2),sy + (int)(fy / 2));
-}
-
+//System
+boolean START=false;
+int dis = 0,angle;
 void draw()
 {
 	field();
 	gaze();
 	print();
-	NDT();
+	NDT(fielddata,fielddata_,START);
 
 	print(dis);
 	print(",");
 	print(angle);
 	print(" / ");
+	print(START);
 	println(" / ");
 
 	delay(5);
@@ -176,21 +212,24 @@ void keyPressed()
 {
 	if (key == 'A' || key == 'a')
 	{
-		clean();
+		clean(fielddata);
+		clean(fielddata_);
 		background(0);
 	}
 }
 
 void serialEvent(Serial p)
 {
+	int x = 0,y = 0;
 	if (p.available() == 4)
 	{
 		byte[] inBuf = new byte[4];
 		p.readBytes(inBuf);
 		dis = (inBuf[0]<<8) + (inBuf[1] & 0xff);
 		angle = (inBuf[2]<<8) + (inBuf[3] & 0xff);
+		START=(359>angle&&angle<1)?true:false;
 		x = (int)(cos(radians((float)angle)) * dis);
 		y = (int)(sin(radians((float)angle)) * dis) *- 1;
-		save(x,y);
+		save(x,y,START);
 	}
 }
