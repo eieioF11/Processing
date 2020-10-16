@@ -39,7 +39,7 @@ void setup()
 	//myPort = new Serial (this, Serial.list ()[1],115200);
 	field();
 	//myPort = new Serial(this, "COM8", 115200);//home COM4 note COM15
-	myPort = new Serial(this, "COM6", 115200);//home COM4 note COM15
+	//myPort = new Serial(this, "COM6", 115200);//home COM4 note COM15
 }
 
 byte[][] fielddata = new byte[fx + 1][fy + 1];
@@ -54,14 +54,17 @@ void save(int x_,int y_)
 	fielddata[indexX][indexY] +=1;
 }
 
+// １グリッドごとの共分散計算
 float[][] AveX = new float[8][8];
 float[][] AveY = new float[8][8];
 float[][] Cov  = new float[8][8];
 void Covariance(int gx,int gy,int G)
 {
+	int N=0;
 	AveX[gx][gy] = 0;
 	AveY[gx][gy] = 0;
 	Cov[gx][gy]  = 0;
+	/*平均座標計算*/
 	for(int i=gx*G;i<(gx+1)*G;i++)
 	{
 		for(int j=gy*G;j<(gy+1)*G;j++)
@@ -70,11 +73,13 @@ void Covariance(int gx,int gy,int G)
 			{
 				AveX[gx][gy]+=i-gx*G;
 				AveY[gx][gy]+=j-gy*G;
+				N++;//データの個数
 			}
 		}
 	}
-	AveX[gx][gy]/=(G-1)*(G-1);
-	AveY[gx][gy]/=(G-1)*(G-1);
+	AveX[gx][gy]/=N;
+	AveY[gx][gy]/=N;
+	/*共分散計算*/
 	for(int i=gx*G;i<(gx+1)*G;i++)
 	{
 		for(int j=gy*G;j<(gy+1)*G;j++)
@@ -87,9 +92,9 @@ void Covariance(int gx,int gy,int G)
 			}
 		}
 	}
-	Cov[gx][gy]/=G*G-1;
+	Cov[gx][gy]/=N-1;
 }
-
+//NDT Slam
 void NDT()
 {
 	textSize(10);
@@ -163,6 +168,7 @@ void draw()
 	print(angle);
 	print(" / ");
 	println(" / ");
+
 	delay(5);
 }
 
