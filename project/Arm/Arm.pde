@@ -5,11 +5,12 @@ Serial myPort;
 float x, y;
 float angle1 = 0.0;
 float angle2 = 0.0;
+float angle3 = 0.0;
 float segLength = 100;
 
 int deg1=0;
 int deg2=0;
-int deg4=0;
+int deg4=90;
 
 int sdeg1=0;
 int sdeg2=0;
@@ -23,7 +24,7 @@ void setup() {
   strokeWeight(30);
   stroke(255, 160);
   
-  x = width * 0.3;
+  x = width * 0.5;
   y = height * 0.8;
   myPort = new Serial(this, "COM10", 115200);//home COM4 note COM15
 }
@@ -31,15 +32,36 @@ void setup() {
 void draw() {
   background(0);
   
+  if (mousePressed == true){
+    switch (mouseButton) 
+    {
+      case LEFT:
+        sdeg3=26;
+        angle3=80;
+      break;  
+      case RIGHT:
+      break;
+    }
+    
+  }
+  else
+  {
+    angle3=0;
+    sdeg3=-40;
+  }
+
   angle1 = (mouseX/float(width)-1.0) * PI;
   angle2 = (mouseY/float(height)-0.5) * PI;
   if(angle1>0)
     angle1=0;
   
   pushMatrix();
-  segment(x, y, angle1); 
-  segment(segLength, 0, angle2);
+  segment(x, y, angle1, segLength); 
+  segment(segLength, 0, angle2, segLength);
+  segment(segLength, 0, radians(angle3), 50);
+  segment((1/2)*segLength, 0, radians(-1*angle3), 50);
   popMatrix();
+  
   deg1=(int)degrees(angle1);
   deg2=(int)degrees(angle2);
   sdeg1=(int)map(deg1,-173,0,-15,90);
@@ -49,19 +71,14 @@ void draw() {
   if(deg4>=90)
     deg4=90;
   sdeg4=deg4;
-  if (mousePressed == true){
-    sdeg3=26;
-  }
-  else
-  {
-    sdeg3=-40;
-  }
+  arc(x,y, 100, 100, radians(0), radians(180-map(deg4,-15,90,0,180)) );
+
 }
 
-void segment(float x, float y, float a) {
+void segment(float x, float y, float a, float Leng) {
   translate(x, y);
   rotate(a);
-  line(0, 0, segLength, 0);
+  line(0, 0, Leng, 0);
 }
 
 void mouseWheel(MouseEvent e ){
