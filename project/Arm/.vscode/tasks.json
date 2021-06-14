@@ -1,25 +1,23 @@
 {
     "version": "2.0.0",
-    "command": "processing-java",
-    "args": [
-        "--force",
-        "--sketch=${workspaceRoot}",
-        "--output=${workspaceRoot}\\out",
-        "--run"
-    ],
     "tasks": [
         {
-            "label": "processing-java",
-            "type": "shell",
-            "command": "processing-java",
+            "label": "Run",
+            "command": "C:\\Processing\\processing-java.exe",
+            "type": "process",
             "args": [
                 "--force",
-                "--sketch=${workspaceRoot}",
-                "--output=${workspaceRoot}\\out",
+                "--sketch=${fileDirname}",
                 "--run"
             ],
-            "problemMatcher": [],
-            "group": "build"
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
         }
     ]
 }
